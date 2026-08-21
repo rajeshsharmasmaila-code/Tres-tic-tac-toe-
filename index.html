@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#171326">
 </head>
 <body>
 
@@ -60,6 +62,52 @@
 
         <!-- ---- PLAY ---- -->
         <section id="view-play" class="view">
+
+            <div class="mode-picker panel">
+                <div class="mode-picker-head">
+                    <div>
+                        <h2>Choose how to play</h2>
+                        <p class="muted">Online, local, or challenge the AI.</p>
+                    </div>
+                    <span id="mode-badge" class="mode-badge">ONLINE</span>
+                </div>
+                <div class="mode-grid">
+                    <button class="mode-btn is-active" data-play-mode="online" type="button">
+                        <span class="mode-icon">🌐</span><strong>Online</strong><small>Play a friend</small>
+                    </button>
+                    <button class="mode-btn" data-play-mode="local" type="button">
+                        <span class="mode-icon">👥</span><strong>2 Players</strong><small>Same device</small>
+                    </button>
+                    <button class="mode-btn" data-play-mode="ai" type="button">
+                        <span class="mode-icon">🤖</span><strong>vs AI</strong><small>Solo challenge</small>
+                    </button>
+                </div>
+            </div>
+
+            <div id="local-setup" class="panel hidden">
+                <div class="setup-head"><div><h2 id="local-title">Quick Match</h2><p class="muted">Choose your rules.</p></div></div>
+                <div class="setup-grid">
+                    <label class="select-field"><span>Board</span><select id="local-size"><option value="3">3 × 3</option><option value="4">4 × 4</option><option value="5">5 × 5</option></select></label>
+                    <label class="select-field"><span>Win length</span><select id="local-win"><option value="3">3 in a row</option><option value="4">4 in a row</option><option value="5">5 in a row</option></select></label>
+                    <label class="select-field"><span>Match</span><select id="local-series"><option value="1">Single game</option><option value="3">Best of 3</option><option value="5">Best of 5</option></select></label>
+                    <label id="ai-difficulty-wrap" class="select-field hidden"><span>AI level</span><select id="ai-difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></label>
+                </div>
+                <button id="start-local-btn" class="btn btn-primary btn-block">Start match</button>
+            </div>
+
+            <div id="local-game" class="local-game hidden">
+                <div class="local-scorebar">
+                    <button id="local-exit-btn" class="btn-icon" type="button" aria-label="Back">←</button>
+                    <div class="local-score"><span id="local-x-label">X</span><strong id="local-x-score">0</strong><span>–</span><strong id="local-o-score">0</strong><span id="local-o-label">O</span></div>
+                    <button id="local-restart-btn" class="btn-icon" type="button" aria-label="Restart">↻</button>
+                </div>
+                <div id="local-status" class="game-status">Your move</div>
+                <div id="local-board" class="local-board" aria-label="Local tic-tac-toe board"></div>
+                <div class="local-actions">
+                    <button id="local-next-btn" class="btn btn-primary btn-block hidden">Next game</button>
+                    <button id="local-new-btn" class="btn btn-secondary btn-block">New match</button>
+                </div>
+            </div>
 
             <div id="lobby" class="lobby">
                 <div class="panel panel-create">
@@ -170,6 +218,12 @@
                 <p id="profile-message" class="lobby-message" role="status"></p>
             </div>
 
+            <div class="panel">
+                <h2>Game settings</h2>
+                <div class="setting-row"><div><strong>Sound effects</strong><span>Moves, wins and draws</span></div><button id="sound-toggle" class="toggle-btn is-on" type="button" aria-pressed="true">ON</button></div>
+                <div class="setting-row"><div><strong>Vibration</strong><span>Haptic feedback on supported phones</span></div><button id="haptic-toggle" class="toggle-btn is-on" type="button" aria-pressed="true">ON</button></div>
+            </div>
+
             <button id="logout-btn" class="btn btn-ghost btn-block">Log out</button>
         </section>
 
@@ -190,5 +244,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
+<script src="js/local-game.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

@@ -1,0 +1,10 @@
+{
+  "name": "Tres \u2014 Tic-Tac-Toe",
+  "short_name": "Tres",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#171326",
+  "theme_color": "#171326",
+  "description": "Online multiplayer, local multiplayer and AI Tic-Tac-Toe.",
+  "icons": []
+}
