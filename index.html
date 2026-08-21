@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tres — Tic-Tac-Toe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="table-texture" aria-hidden="true"></div>
+
+<!-- ============ AUTH VIEW ============ -->
+<section id="view-auth" class="view view-auth">
+    <div class="auth-card">
+        <div class="brand">
+            <span class="brand-mark"><span class="mark-x">X</span><span class="mark-o">O</span></span>
+            <h1>Tres</h1>
+            <p class="tagline">Best of nine, always.</p>
+        </div>
+
+        <div class="auth-tabs" role="tablist">
+            <button class="auth-tab is-active" data-mode="login" type="button">Log in</button>
+            <button class="auth-tab" data-mode="signup" type="button">Sign up</button>
+        </div>
+
+        <form id="auth-form" class="auth-form">
+            <label class="field">
+                <span>Email</span>
+                <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+            </label>
+            <label class="field">
+                <span>Password</span>
+                <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" minlength="6" required>
+            </label>
+            <button id="auth-submit" type="submit" class="btn btn-primary btn-block">Log in</button>
+        </form>
+
+        <p id="auth-message" class="auth-message" role="status"></p>
+    </div>
+</section>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app-shell" class="app-shell hidden">
+
+    <header class="app-bar">
+        <div class="app-bar-brand">
+            <span class="brand-mark small"><span class="mark-x">X</span><span class="mark-o">O</span></span>
+            <span class="app-bar-title">Tres</span>
+        </div>
+        <button id="profile-chip" class="profile-chip" type="button" aria-label="Open profile">
+            <span id="profile-avatar" class="avatar-emoji">🙂</span>
+        </button>
+    </header>
+
+    <main class="app-main">
+
+        <!-- ---- PLAY ---- -->
+        <section id="view-play" class="view">
+
+            <div id="lobby" class="lobby">
+                <div class="panel panel-create">
+                    <h2>Start a match</h2>
+                    <p class="muted">Create a table and share the code.</p>
+                    <button id="create-game-btn" class="btn btn-primary btn-block">
+                        <span>Create game</span>
+                    </button>
+                </div>
+
+                <div class="panel panel-join">
+                    <h2>Join a match</h2>
+                    <p class="muted">Enter your friend's 6-digit code.</p>
+                    <div class="join-row">
+                        <input id="game-code-input" class="code-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="000000">
+                        <button id="join-game-btn" class="btn btn-secondary">Join</button>
+                    </div>
+                </div>
+
+                <p id="lobby-message" class="lobby-message" role="status"></p>
+            </div>
+
+            <div id="game-room" class="game-room hidden">
+
+                <div class="room-bar">
+                    <button id="leave-game-btn" class="btn-icon" type="button" aria-label="Back to lobby">←</button>
+                    <div class="room-code">
+                        <span>Table</span>
+                        <strong id="display-game-code">------</strong>
+                        <button id="copy-code-btn" class="btn-copy" type="button" title="Copy code">⧉</button>
+                    </div>
+                    <div class="room-spacer"></div>
+                </div>
+
+                <div class="players-row">
+                    <div id="card-player-x" class="player-card mark-x-theme">
+                        <span class="player-mark">X</span>
+                        <strong id="player-x-name">—</strong>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div id="card-player-o" class="player-card mark-o-theme">
+                        <span class="player-mark">O</span>
+                        <strong id="player-o-name">Waiting…</strong>
+                    </div>
+                </div>
+
+                <p id="game-status" class="game-status">Waiting for player two…</p>
+
+                <div id="game-board" class="board hidden">
+                    <button class="cell" data-index="0" aria-label="Cell 1"></button>
+                    <button class="cell" data-index="1" aria-label="Cell 2"></button>
+                    <button class="cell" data-index="2" aria-label="Cell 3"></button>
+                    <button class="cell" data-index="3" aria-label="Cell 4"></button>
+                    <button class="cell" data-index="4" aria-label="Cell 5"></button>
+                    <button class="cell" data-index="5" aria-label="Cell 6"></button>
+                    <button class="cell" data-index="6" aria-label="Cell 7"></button>
+                    <button class="cell" data-index="7" aria-label="Cell 8"></button>
+                    <button class="cell" data-index="8" aria-label="Cell 9"></button>
+                    <svg id="win-line-svg" class="win-line-svg" viewBox="0 0 300 300" aria-hidden="true">
+                        <line id="win-line" x1="0" y1="0" x2="0" y2="0"></line>
+                    </svg>
+                </div>
+
+                <div id="game-actions" class="game-actions hidden">
+                    <button id="rematch-btn" class="btn btn-primary btn-block">Request rematch</button>
+                    <button id="new-table-btn" class="btn btn-ghost btn-block">New table</button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ---- HISTORY ---- -->
+        <section id="view-history" class="view hidden">
+            <h2 class="view-title">History</h2>
+            <div id="history-list" class="stack"><p class="empty-note">No finished games yet — go play one!</p></div>
+        </section>
+
+        <!-- ---- LEADERBOARD ---- -->
+        <section id="view-leaderboard" class="view hidden">
+            <h2 class="view-title">Leaderboard</h2>
+            <div id="leaderboard-list" class="stack"><p class="empty-note">Loading standings…</p></div>
+        </section>
+
+        <!-- ---- PROFILE ---- -->
+        <section id="view-profile" class="view hidden">
+            <h2 class="view-title">Profile</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card"><strong id="stat-games">0</strong><span>Games</span></div>
+                <div class="stat-card"><strong id="stat-wins">0</strong><span>Wins</span></div>
+                <div class="stat-card"><strong id="stat-losses">0</strong><span>Losses</span></div>
+                <div class="stat-card"><strong id="stat-draws">0</strong><span>Draws</span></div>
+                <div class="stat-card stat-wide"><strong id="stat-winrate">0%</strong><span>Win rate</span></div>
+            </div>
+
+            <div class="panel">
+                <h2>Edit profile</h2>
+                <label class="field">
+                    <span>Display name</span>
+                    <input id="username-input" type="text" maxlength="20" placeholder="Player">
+                </label>
+                <label class="field">
+                    <span>Avatar emoji</span>
+                    <input id="avatar-input" type="text" maxlength="4" placeholder="🙂">
+                </label>
+                <button id="save-profile-btn" class="btn btn-primary btn-block">Save changes</button>
+                <p id="profile-message" class="lobby-message" role="status"></p>
+            </div>
+
+            <button id="logout-btn" class="btn btn-ghost btn-block">Log out</button>
+        </section>
+
+    </main>
+
+    <nav class="tab-bar">
+        <button class="tab-btn is-active" data-view="play" type="button"><span class="tab-icon">▦</span><span>Play</span></button>
+        <button class="tab-btn" data-view="history" type="button"><span class="tab-icon">↻</span><span>History</span></button>
+        <button class="tab-btn" data-view="leaderboard" type="button"><span class="tab-icon">★</span><span>Ranks</span></button>
+        <button class="tab-btn" data-view="profile" type="button"><span class="tab-icon">◐</span><span>Profile</span></button>
+    </nav>
+
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
